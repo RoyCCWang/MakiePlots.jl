@@ -11,7 +11,7 @@ Random.seed!(25)
 
 #include("./helpers/broken_axis_1D.jl")
 import MakiePlots
-
+#import Colors
 
 legend_labels = ["cos"; "sin"; "sinc"]
 title = "Agmatine spectrum (real part), 600 MHz"
@@ -46,6 +46,10 @@ line_width_list = ones(length(qs)) .* 3.0
 
 ## end user settings.
 
+
+plot_colours = MakiePlots.getplotcolors(length(qs), Float64)
+
+
 size_inches = (max_width_inches, aspect_fig*max_width_inches)
 
 MakiePlots.plotbrokenaxis1D(
@@ -58,6 +62,7 @@ MakiePlots.plotbrokenaxis1D(
     reverse_x_axis = true,
     grid_visible = false,
 
+    color_list = plot_colours,
     line_style_list = line_style_list,
     line_width_list = line_width_list,
 

@@ -25,6 +25,12 @@ method.
 - `sort`   -- (optional, default: `true`) flag for sorting the vertices
               lexicographically; sortedness is required for correctness
 
+### Optional inputs
+
+- `points` -- list of 2D vectors; is sorted in-place inside this function
+- `sort`   -- (optional, default: `true`) flag for sorting the vertices
+              lexicographically; sortedness is required for correctness
+
 ### Output
 
 List of vectors containing the 2D coordinates of the corner points of the
@@ -51,7 +57,7 @@ function plotbrokenaxis1D(
     #canvas_size = (2018, 1090),
     reverse_x_axis = false,
     grid_visible = true,
-    color_list = [],
+    color_list::Vector = [],
     background_color = :white,
 
     line_style_list = collect( :solid for _ = 1:length(qs)),
@@ -83,7 +89,7 @@ function plotbrokenaxis1D(
     font_size = 12,
     resize_before_saving::Bool = true,
 
-    ) where T <: AbstractFloat
+    ) where {T <: AbstractFloat, TC <: AbstractFloat}
 
     ### checks.
     # the following seems hardcorded into Makie.jl's WilkinsonTicks().
@@ -96,6 +102,26 @@ function plotbrokenaxis1D(
     N = length(intervals)
 
     ### setup.
+
+    plot_colors = Vector{Makie.RGBAf}(undef, 0)
+    if length(color_list) == length(qs)
+
+        resize!(plot_colors, length(qs))
+
+        alpha = 1.0 # default alpha to opaque.
+        for n in eachindex(color_list)
+
+            if length(color_list) > 3
+                alpha = color_list[4]
+            end
+
+            plot_colors[n] = Makie.RGBAf(color_list[n][1],
+                color_list[n][2],
+                color_list[n][3],
+                alpha)
+        end
+    end
+
     x_tick_decimal_places_format = "{:.$(x_tick_decimal_places)f}"
     y_tick_decimal_places_format = "{:.$(y_tick_decimal_places)f}"
     canvas_size = collect( round(Int, pt_per_inch*size_inches[d]) for d = 1:2)
@@ -174,23 +200,24 @@ function plotbrokenaxis1D(
 
         line_handles[n] = Vector{Lines}(undef, length(qs))
         for m in eachindex(qs)
-            if !isempty(color_list)
+            if !isempty(plot_colors)
                 line_handles[n][m] = lines!(
                     axes[n],
                     Q[n].min..Q[n].max,
                     qs[m],
-                    color = color_list[m],
+                    color = plot_colors[m],
+                    linestyle = line_style_list[m],
+                    linewidth = line_width_list[m],
+                )
+            else
+                line_handles[n][m] = lines!(
+                    axes[n],
+                    Q[n].min..Q[n].max,
+                    qs[m],
                     linestyle = line_style_list[m],
                     linewidth = line_width_list[m],
                 )
             end
-            line_handles[n][m] = lines!(
-                axes[n],
-                Q[n].min..Q[n].max,
-                qs[m],
-                linestyle = line_style_list[m],
-                linewidth = line_width_list[m],
-            )
         end
 
         #ylims!(axes[n], min_limits[n], max_limits[n]) # default.
