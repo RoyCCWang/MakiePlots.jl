@@ -5,11 +5,11 @@ module MakiePlots
     using CairoMakie
     #CairoMakie.activate!()
 
-    greet() = print("Hello World!!!")
+    #greet() = print("Hello World!!!")
 
-    include("./nmr/broken_axis_1D.jl")
+    include("./spectroscopy/multi_interval_1D.jl")
     include("./colors.jl")
 
-    export plotbrokenaxis1D, getplotcolors
+    export plotmultiinterval1D, getplotcolors
 
 end # module MakiePlots

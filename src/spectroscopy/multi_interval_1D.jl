@@ -13,39 +13,8 @@ end
 
 
 """
-    monotone_chain!(points::Vector{VN}; sort::Bool=true
-                   )::Vector{VN} where {VN<:AbstractVector{N}} where {N<:Real}
-
-Compute the convex hull of points in the plane using Andrew's monotone chain
-method.
-
-### Input
-
-- `points` -- list of 2D vectors; is sorted in-place inside this function
-- `sort`   -- (optional, default: `true`) flag for sorting the vertices
-              lexicographically; sortedness is required for correctness
-
-### Optional inputs
-
-- `points` -- list of 2D vectors; is sorted in-place inside this function
-- `sort`   -- (optional, default: `true`) flag for sorting the vertices
-              lexicographically; sortedness is required for correctness
-
-### Output
-
-List of vectors containing the 2D coordinates of the corner points of the
-convex hull.
-
-### Notes
-
-For large sets of points, it is convenient to use static vectors to get
-maximum performance. For information on how to convert usual vectors
-into static vectors, see the type `SVector` provided by the
-[StaticArrays](http://juliaarrays.github.io/StaticArrays.jl/stable/)
-package.
-
-"""
-function plotbrokenaxis1D(
+```
+plotmultiinterval1D(
     qs::Vector{Function},
     intervals::Vector{Tuple{T,T}};
 
@@ -54,7 +23,7 @@ function plotbrokenaxis1D(
     title_font_size = 30,
     title::String = "Figure",
     width_padding_proportion = 0.0,
-    #canvas_size = (2018, 1090),
+
     reverse_x_axis = false,
     grid_visible = true,
     color_list::Vector = [],
@@ -90,6 +59,72 @@ function plotbrokenaxis1D(
     resize_before_saving::Bool = true,
 
     ) where {T <: AbstractFloat, TC <: AbstractFloat}
+```
+
+Most of the options are self-explanatory. Notes for the others:
+- `line_style_list::Vector{Symbol}`
+Options are: `:solid`, `:dot`, `:dashdot`. See the documentation on `MakiePlots.Makie.lines` or visit the `Makie.jl` API documentation website.
+
+- `color_list::Vector`
+Should be a returned `Vector` data type of 3 or 4-element type values. Each tuple element should be a floating-point number between `0` and `1`. Such a variable can be created using `MakiePlots.getplotcolors()` for opaque lines.
+
+- `use_Wilkinson_for_ticks::Bool`
+Controls the method to compute ticks and locations. Set this to `false` to use `Makie.LinearTicks` instead of `Makie.WilkinsonTicks`.
+
+- `legend_orientation::Bool`
+Options are `:vertical`, `horizontal`.
+
+- `width_padding_proportion`
+A floating-point number between `0` and `1`. Set to non-zero only if clipping occurs. The white spaces around the border should increase when this increases.
+
+"""
+function plotmultiinterval1D(
+    qs::Vector{Function},
+    intervals::Vector{Tuple{T,T}};
+
+    legend_labels = collect( "$i" for i in 1:length(qs) ),
+
+    title_font_size = 30,
+    title::String = "Figure",
+    width_padding_proportion = 0.0,
+
+    reverse_x_axis = false,
+    grid_visible = true,
+    color_list::Vector = [],
+    background_color = :white,
+
+    line_style_list = collect( :solid for _ = 1:length(qs)),
+    line_width_list = collect( 3.0 for _ = 1:length(qs)),
+
+    x_label = "",
+    x_tick_decimal_places::Int = 3,
+    x_tick_label_size = 20,
+    x_label_font_size = 25,
+
+    y_label = "",
+    y_tick_decimal_places::Int = 3,
+    y_tick_label_size = 20,
+    y_label_font_size = 25,
+
+    use_Wilkinson_for_ticks = false, # default is LinearTicks from Makie.
+    min_total_x_ticks = 2,
+    max_total_x_ticks = 10,
+
+    legend_font_size = 25,
+    legend_orientation = :horizontal, # :vertical or :horizontal
+    legend_frame_visible = false,
+    legend_line_width = 2,
+
+    save_folder_path::String = "",
+    save_name::String = "figure.svg",
+    size_inches::Tuple{Real,Real} = (4,3),
+    pt_per_inch::Int = 72,
+    font_size = 12,
+    resize_before_saving::Bool = true,
+
+    ) where {T <: AbstractFloat, TC <: AbstractFloat}
+
+    #canvas_size = (2018, 1090),
 
     ### checks.
     # the following seems hardcorded into Makie.jl's WilkinsonTicks().
@@ -246,6 +281,10 @@ function plotbrokenaxis1D(
         axes[n].xticks = tickfunc(num_ticks)
 
         axes[n].xticklabelsize = x_tick_label_size
+        # xlabel for each subplot is not used. Make an entire row for the x label later in this function.
+
+        axes[n].yticklabelsize = y_tick_label_size
+        axes[n].ylabelsize = y_label_font_size
     end
 
     ## visibility.
@@ -278,7 +317,7 @@ function plotbrokenaxis1D(
         f[3,end],
         line_handles[end],
         legend_labels,
-        orientation = :horizontal,
+        orientation = legend_orientation,
         tellwidth = false,
         tellheight = true,
         framevisible = legend_frame_visible,
