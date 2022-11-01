@@ -7,7 +7,7 @@ module MakiePlots
 
     #greet() = print("Hello World!!!")
 
-    include("./spectroscopy/multi_interval_1D.jl")
+    include("./spectroscopy/multi-interval.jl")
     include("./colors.jl")
 
     export plotmultiinterval1D, getplotcolors
