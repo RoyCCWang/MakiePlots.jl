@@ -18,7 +18,7 @@ plotmultiinterval1D(
     qs::Vector{Function},
     intervals::Vector{Tuple{T,T}};
 
-    legend_labels = collect( "$i" for i in 1:length(qs) ),
+    legend_labels = collect( string(i) for i in 1:length(qs) ),
 
     title_font_size = 30,
     title::String = "Figure",
