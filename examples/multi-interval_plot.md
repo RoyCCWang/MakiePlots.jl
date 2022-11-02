@@ -35,16 +35,16 @@ intervals[1] = (0.0, intervals[1][2]) # start at zero to make it longer.
 
 # Specify physical dimension
 
-Suppose we have a width constraint of 8.3 cm.
+Suppose we have a width constraint of 8.3 inches.
 
 ````julia
-max_width_inches = 8.3 * 2.54
+max_width_inches = 8.3
 ````
 
-However, we want to use a size of 8 cm. Do a sanity-check.
+However, we want to use a size of 8 inches. Do a sanity-check.
 
 ````julia
-width_inches = 8 * 2.54
+width_inches = 8
 @assert width_inches < max_width_inches
 ````
 
