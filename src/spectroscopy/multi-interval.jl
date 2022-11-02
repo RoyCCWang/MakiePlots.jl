@@ -15,7 +15,7 @@ end
 """
 ```
 plotmultiinterval1D(
-    qs::Vector{Function},
+    qs::Vector,
     intervals::Vector{Tuple{T,T}};
 
     legend_labels = collect( string(i) for i in 1:length(qs) ),
@@ -50,6 +50,7 @@ plotmultiinterval1D(
     legend_orientation = :horizontal, # :vertical or :horizontal
     legend_frame_visible = false,
     legend_line_width = 2,
+    legend_placement = :lower_right,
 
     save_folder_path::String = "",
     save_name::String = "figure.svg",
@@ -61,7 +62,12 @@ plotmultiinterval1D(
     ) where {T <: AbstractFloat, TC <: AbstractFloat}
 ```
 
+Creates intermediate folders to the path indicated in `save_folder_path`, and saves a plot figure in it.
+
 Most of the options are self-explanatory. Notes for the others:
+
+- `qs` is a Vector of functions, anonymous functions, or callable object.
+
 - `line_style_list::Vector{Symbol}`
 Options are: `:solid`, `:dot`, `:dashdot`. See the documentation on `MakiePlots.Makie.lines` or visit the `Makie.jl` API documentation website.
 
@@ -74,12 +80,18 @@ Controls the method to compute ticks and locations. Set this to `false` to use `
 - `legend_orientation::Bool`
 Options are `:vertical`, `horizontal`.
 
+- `legend_placement::Symbol`
+Options are `:lower_right` for just right of the x label text, `:bottom` for a new dedicated row under the x label text.
+
 - `width_padding_proportion`
 A floating-point number between `0` and `1`. Set to non-zero only if clipping occurs. The white spaces around the border should increase when this increases.
 
+
+
 """
 function plotmultiinterval1D(
-    qs::Vector{Function},
+    #qs::Vector{Function},
+    qs::Vector,
     intervals::Vector{Tuple{T,T}};
 
     legend_labels = collect( string(i) for i in 1:length(qs) ),
@@ -121,6 +133,8 @@ function plotmultiinterval1D(
     pt_per_inch::Int = 72,
     font_size = 12,
     resize_before_saving::Bool = true,
+
+    legend_placement = :lower_right,
 
     ) where {T <: AbstractFloat, TC <: AbstractFloat}
 
@@ -146,8 +160,8 @@ function plotmultiinterval1D(
         alpha = 1.0 # default alpha to opaque.
         for n in eachindex(color_list)
 
-            if length(color_list) > 3
-                alpha = color_list[4]
+            if length(color_list[n]) > 3
+                alpha = color_list[n][4]
             end
 
             plot_colors[n] = Makie.RGBAf(color_list[n][1],
@@ -313,18 +327,31 @@ function plotmultiinterval1D(
 
 
     @assert length(line_handles[end]) == length(qs)
-    legend_handle = Legend(
-        f[3,end],
-        line_handles[end],
-        legend_labels,
-        orientation = legend_orientation,
-        tellwidth = false,
-        tellheight = true,
-        framevisible = legend_frame_visible,
-        labelsize = legend_font_size,
-        linewidth = legend_line_width,
-
-    )
+    if legend_placement == :lower_right
+        Legend(
+            f[3,end],
+            line_handles[end],
+            legend_labels,
+            orientation = legend_orientation,
+            tellwidth = false,
+            tellheight = true,
+            framevisible = legend_frame_visible,
+            labelsize = legend_font_size,
+            linewidth = legend_line_width,
+        )
+    elseif legend_placement == :bottom
+        Legend(
+            f[4,:],
+            line_handles[end],
+            legend_labels,
+            orientation = legend_orientation,
+            tellwidth = false,
+            tellheight = true,
+            framevisible = legend_frame_visible,
+            labelsize = legend_font_size,
+            linewidth = legend_line_width,
+        )
+    end
 
     ### save.
 
@@ -335,7 +362,7 @@ function plotmultiinterval1D(
     # make dir if doesn't exist.
     save_path = save_name
     if !isempty(save_folder_path)
-        t = @task begin; isdir(save_folder_path) || mkdir(save_folder_path); end
+        t = @task begin; isdir(save_folder_path) || mkpath(save_folder_path); end
         schedule(t); wait(t)
         save_path = joinpath(save_folder_path, save_name)
     end
