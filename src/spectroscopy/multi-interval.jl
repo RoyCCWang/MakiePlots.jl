@@ -81,7 +81,8 @@ Controls the method to compute ticks and locations. Set this to `false` to use `
 Options are `:vertical`, `horizontal`.
 
 - `legend_placement::Symbol`
-Options are `:lower_right` for just right of the x label text, `:bottom` for a new dedicated row under the x label text.
+If you want to have a legend, the options are `:lower_right` for just right of the x label text, `:bottom` for a new dedicated row under the x label text.
+If you don't want a legend, enter any other symbol here, for example, `:none`.
 
 - `width_padding_proportion`
 A floating-point number between `0` and `1`. Set to non-zero only if clipping occurs. The white spaces around the border should increase when this increases.
