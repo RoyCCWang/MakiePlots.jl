@@ -83,6 +83,8 @@ use_Wilkinson_for_ticks = false
 legend_font_size = 25
 legend_orientation = :horizontal # :vertical or :horizontal
 legend_line_width = 2
+legend_placement = :bottom
+max_legend_per_line = 1 # how many legend lines per row, if `legend_placement = :bottom`.
 
 # ## Troubleshooting
 # If clipping occurs or the figure goes off page, set this to a small non-zero value. Takes a value betwee `0` and `1`.
@@ -121,6 +123,8 @@ MakiePlots.plotmultiinterval1D(
     legend_font_size = legend_font_size,
     legend_orientation = legend_orientation,
     legend_line_width = legend_line_width,
+    legend_placement = legend_placement,
+    max_legend_per_line = max_legend_per_line,
 
     save_folder_path = save_folder_path,
     save_name = save_name,

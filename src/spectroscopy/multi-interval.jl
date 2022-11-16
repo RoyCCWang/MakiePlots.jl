@@ -51,7 +51,8 @@ plotmultiinterval1D(
     legend_frame_visible = false,
     legend_line_width = 2,
     legend_placement = :lower_right,
-
+    max_legend_per_line = 6,
+    
     save_folder_path::String = "",
     save_name::String = "figure.svg",
     size_inches::Tuple{Real,Real} = (4,3),
@@ -84,6 +85,9 @@ Options are `:vertical`, `horizontal`.
 If you want to have a legend, the options are `:lower_right` for just right of the x label text, `:bottom` for a new dedicated row under the x label text.
 If you don't want a legend, enter any other symbol here, for example, `:none`.
 
+- `max_legend_per_line::Int`
+In effect only if `lengend_placement` is set to `:bottom`.
+    
 - `width_padding_proportion`
 A floating-point number between `0` and `1`. Set to non-zero only if clipping occurs. The white spaces around the border should increase when this increases.
 
@@ -127,6 +131,7 @@ function plotmultiinterval1D(
     legend_orientation = :horizontal, # :vertical or :horizontal
     legend_frame_visible = false,
     legend_line_width = 2,
+    max_legend_per_line = 6,
 
     save_folder_path::String = "",
     save_name::String = "figure.svg",
@@ -341,17 +346,44 @@ function plotmultiinterval1D(
             linewidth = legend_line_width,
         )
     elseif legend_placement == :bottom
-        Legend(
-            f[4,:],
-            line_handles[end],
-            legend_labels,
-            orientation = legend_orientation,
-            tellwidth = false,
-            tellheight = true,
-            framevisible = legend_frame_visible,
-            labelsize = legend_font_size,
-            linewidth = legend_line_width,
-        )
+        lh = line_handles[end]
+
+        #@show lh # debug.
+        if length(lh) > max_legend_per_line
+            N_rows = ceil(Int, length(lh)/max_legend_per_line)
+
+            fin_ind = 0
+            for r = 1:N_rows
+                
+                st_ind = max_legend_per_line*(r-1) + 1
+                fin_ind = min(max_legend_per_line+st_ind-1, length(lh))
+                #@show 3+r, st_ind, fin_ind, lh[st_ind:fin_ind] # debug.
+
+                Legend(
+                f[3+r,:],
+                lh[st_ind:fin_ind],
+                legend_labels[st_ind:fin_ind],
+                orientation = legend_orientation,
+                tellwidth = false,
+                tellheight = true,
+                framevisible = legend_frame_visible,
+                labelsize = legend_font_size,
+                linewidth = legend_line_width,
+            )
+            end
+        else
+            Legend(
+                f[4,:],
+                line_handles[end],
+                legend_labels,
+                orientation = legend_orientation,
+                tellwidth = false,
+                tellheight = true,
+                framevisible = legend_frame_visible,
+                labelsize = legend_font_size,
+                linewidth = legend_line_width,
+            )
+        end
     end
 
     ### save.
