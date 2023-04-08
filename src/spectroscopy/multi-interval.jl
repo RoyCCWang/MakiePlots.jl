@@ -91,7 +91,16 @@ In effect only if `lengend_placement` is set to `:bottom`.
 - `width_padding_proportion`
 A floating-point number between `0` and `1`. Set to non-zero only if clipping occurs. The white spaces around the border should increase when this increases.
 
-
+- `intervals`
+An example is:
+```
+julia> intervals
+4-element Vector{Tuple{Float64, Float64}}:
+ (-0.18, 0.18)
+ (0.8579726783855377, 1.1549433310182984)
+ (2.1202980270631864, 2.4139284713717926)
+ (3.4219504772166216, 3.7758634384778023)
+```
 
 """
 function plotmultiinterval1D(
@@ -142,7 +151,7 @@ function plotmultiinterval1D(
 
     legend_placement = :lower_right,
 
-    ) where {T <: AbstractFloat, TC <: AbstractFloat}
+    ) where T <: AbstractFloat
 
     #canvas_size = (2018, 1090),
 
@@ -328,8 +337,8 @@ function plotmultiinterval1D(
     end
 
     ### labels.
-    supertitle = Label(f[1, :], title_string, textsize = title_font_size, justification = :center )
-    supertitle = Label(f[3, :], total_x_label_string, textsize = x_label_font_size, justification = :center )
+    supertitle = Label(f[1, :], title_string, fontsize = title_font_size, justification = :center )
+    supertitle = Label(f[3, :], total_x_label_string, fontsize = x_label_font_size, justification = :center )
 
 
     @assert length(line_handles[end]) == length(qs)

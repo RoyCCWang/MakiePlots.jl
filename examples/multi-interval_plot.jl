@@ -94,7 +94,7 @@ width_padding_proportion = 0.0
 
 size_inches = (width_inches, aspect_fig*width_inches)
 
-MakiePlots.plotmultiinterval1D(
+fig = MakiePlots.plotmultiinterval1D(
     qs,
     intervals,
     legend_labels = legend_labels,
@@ -131,6 +131,11 @@ MakiePlots.plotmultiinterval1D(
     size_inches = size_inches,
     pt_per_inch = pt_per_inch,
     font_size = font_size,
-    )
+)
 
-#src electrondisplay(f) # display in electron display.
+#x = LinRange(0, 10, 100)
+#y = sin.(x)
+#MakiePlots.Makie.scatter!(fig.current_axis, x, y) 
+
+#electrondisplay(f) # display in electron display.
+#save(save_path, fig, pt_per_unit = 1)
