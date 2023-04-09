@@ -151,6 +151,8 @@ function plotmultiinterval1D(
 
     legend_placement = :lower_right,
 
+    verbose = false, # for debugging.
+
     ) where T <: AbstractFloat
 
     #canvas_size = (2018, 1090),
@@ -189,6 +191,10 @@ function plotmultiinterval1D(
     x_tick_decimal_places_format = "{:.$(x_tick_decimal_places)f}"
     y_tick_decimal_places_format = "{:.$(y_tick_decimal_places)f}"
     canvas_size = collect( round(Int, pt_per_inch*size_inches[d]) for d = 1:2)
+    
+    if verbose
+        @show canvas_size
+    end
 
     tickfunc = LinearTicks # more ticks?
     if use_Wilkinson_for_ticks
@@ -205,7 +211,8 @@ function plotmultiinterval1D(
     # TODO perhaps one can automatically find `width_padding_proportion` via f.layout.default_colgap.x * N_regions to determine width_padding_proportion, but not sure if Makie.jl will change in the future.
     y_min, y_max, aspects = getplotproperties(Q, qs;
         canvas_aspect_ratio = canvas_aspect_ratio,
-        width_padding_proportion = width_padding_proportion) # with alignmode outside(), just need a small number for edge tick marks.
+        width_padding_proportion = width_padding_proportion, # with alignmode outside(), just need a small number for edge tick marks.
+    )
 
 
     ### create figure, layout, axes.

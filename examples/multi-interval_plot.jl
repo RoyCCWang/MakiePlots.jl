@@ -37,6 +37,7 @@ width_inches = 8
 # The aspect ratio of the entire row of subplots (i.e. the entire figure).
 aspect_fig = 0.54
 
+# Note that if exporting to SVG, like in this example, we can always resize and adjust the resolution in a vector graphics editor later.
 
 #=
 # Visualization settings.
@@ -50,10 +51,12 @@ We won't go over self-explanatory options.
 title_font_size = 30
 grid_visible = false
 line_width_list = ones(length(qs)) .* 3.0
+#line_width_list = ones(length(qs)) .* 0.2
 
 save_folder_path = "./output"
 save_name = "figure.svg"
-pt_per_inch = 72
+#pt_per_inch = 72
+pt_per_inch = 600
 
 # default font size for text that isn't specified.
 font_size = 12
@@ -131,6 +134,10 @@ fig = MakiePlots.plotmultiinterval1D(
     size_inches = size_inches,
     pt_per_inch = pt_per_inch,
     font_size = font_size,
+
+    resize_before_saving = true,
+    #resize_before_saving = false,
+    verbose = true,
 )
 
 #x = LinRange(0, 10, 100)
